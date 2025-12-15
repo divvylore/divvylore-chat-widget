@@ -14,8 +14,13 @@ interface DivvyloreLoaderHandle {
   container: HTMLElement;
 }
 
+interface DivvyloreLoaderRuntime {
+  mount: (config: DivvyloreLoaderConfig) => DivvyloreLoaderHandle | null;
+}
+
 interface DivvyloreWindow extends Window {
   loadDivvyloreChatWidget?: (config: DivvyloreLoaderConfig) => DivvyloreLoaderHandle | null;
+  DivvyloreChatLoader?: DivvyloreLoaderRuntime;
 }
 
 const roots = new Map<HTMLElement, Root>();
@@ -89,6 +94,12 @@ const mountWidget = (config: DivvyloreLoaderConfig): DivvyloreLoaderHandle | nul
 };
 
 const initializeLoader = () => {
+  const divvyWindow = window as DivvyloreWindow;
+  if (divvyWindow.DivvyloreChatLoader) {
+    dispatchLifecycleEvent('divvylore:ready');
+    return;
+  }
+
   const loader = (config: DivvyloreLoaderConfig) => {
     if (!config || !config.agentId || !config.agentKey) {
       const error = new Error('agentId and agentKey are required to mount DivvyloreChatWidget');
@@ -101,7 +112,10 @@ const initializeLoader = () => {
     return mountWidget(config);
   };
 
-  (window as DivvyloreWindow).loadDivvyloreChatWidget = loader;
+  divvyWindow.loadDivvyloreChatWidget = loader;
+  divvyWindow.DivvyloreChatLoader = {
+    mount: loader,
+  };
   dispatchLifecycleEvent('divvylore:ready');
 };
 
