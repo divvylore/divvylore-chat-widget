@@ -47,6 +47,8 @@ Upload both files to any static hosting provider (CDN, storage bucket, etc.) and
 </script>
 ```
 
+> The loader sets `window.DivvyloreChatLoader` once it finishes booting so the snippet guard can safely prevent duplicate downloads on pages that inject the loader multiple times.
+
 ### Events
 
 The loader dispatches these custom DOM events so partners can monitor availability without impacting the rest of their page:
