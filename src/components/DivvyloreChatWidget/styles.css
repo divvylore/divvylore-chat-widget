@@ -1,0 +1,461 @@
+/* CSS Variables for customization */
+:root {
+  --chat-primary-color: #744da9;
+  --chat-glow-color: rgba(116, 77, 169, 0.28);
+  --chat-hover-color: #7d52b0;
+  --animation-duration-fast: 1.8s;
+  --animation-duration-medium: 3.5s;
+  --animation-duration-slow: 5s;
+}
+
+/* Animation keyframes for chat widget components */
+
+/* Smooth widget expansion animation */
+@keyframes widgetExpand {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Enhanced smooth widget expansion animation */
+@keyframes widgetExpandSmooth {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 50px;
+  }
+  40% {
+    opacity: 0.8;
+    transform: translateY(10px) scale(0.95);
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.12);
+    border-radius: 20px;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+  }
+}
+
+@keyframes inputTyping {
+  0%, 100% {
+    border-color: #e1e4ea;
+  }
+  50% {
+    border-color: #744da9;
+  }
+}
+
+@keyframes messageAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dialogAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Widget slide-in animation with smooth bounce */
+@keyframes widgetSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.8);
+  }
+  40% {
+    opacity: 0.8;
+    transform: translateY(-8px) scale(1.05);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(2px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Typing indicator animation */
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  margin: 0 1px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  animation: typing 1.4s infinite ease-in-out both;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes typing {
+  0%, 80%, 100% { 
+    transform: scale(0.6);
+  }
+  40% { 
+    transform: scale(1);
+  }
+}
+
+/* Message appearing animation */
+.message-appear {
+  animation: messageAppear 0.3s ease-out;
+}
+
+/* Dialog appearing animation */
+.dialog-appear {
+  animation: dialogAppear 0.25s ease-out;
+}
+
+/* Widget slide-in animation */
+.widget-slide-in {
+  animation: widgetSlideIn 0.3s ease-out;
+}
+
+/* Widget animation classes */
+.widget-expand {
+  animation: widgetExpand 0.5s ease-out forwards;
+}
+
+.widget-slide-in {
+  animation: widgetSlideIn 0.4s ease-out forwards;
+}
+
+/* Smooth transition helpers */
+.chat-button-smooth {
+  will-change: transform, box-shadow, background-color;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Additional smooth animations for enhanced UX */
+@keyframes buttonHover {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  100% {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(116, 77, 169, 0.25);
+  }
+}
+
+@keyframes widgetWidthTransition {
+  0% {
+    width: var(--start-width);
+  }
+  100% {
+    width: var(--end-width);
+  }
+}
+
+/* Smooth transitions for width changes */
+.widget-width-transition {
+  transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Enhanced hover effects */
+.chat-button-enhanced:hover {
+  animation: buttonHover 0.3s ease-out forwards;
+}
+
+.chat-button-enhanced:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease-in-out;
+}
+
+/* Smooth transition for width changes */
+.simple-chat-widget {
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              transform 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+/* Scrollbar styling for webkit browsers */
+.simple-chat-widget ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.simple-chat-widget ::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+.simple-chat-widget ::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+/* Button hover effects */
+.action-button {
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-radius: 4px;
+}
+
+/* Prevent text selection in buttons */
+.action-button, 
+.chat-button {
+  user-select: none;
+}
+
+/* Enhanced chat button styles for text support */
+.chat-button-with-text {
+  border-radius: 30px !important;
+  padding-left: 8px !important;
+  padding-right: 16px !important;
+  justify-content: flex-start !important;
+  gap: 12px;
+}
+
+.chat-button-icon-container {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chat-button-default-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-button-text {
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 100px;
+}
+
+/* Hide scrollbars for chat input textarea */
+.chat-input-textarea {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.chat-input-textarea::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* Only show scrollbar when content overflows AND we explicitly enable it */
+.chat-input-textarea.with-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+}
+
+.chat-input-textarea.with-scrollbar::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+}
+
+.chat-input-textarea.with-scrollbar::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+.chat-input-textarea.with-scrollbar::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+/* Ensure all chat widget text is left-aligned */
+.simple-chat-widget,
+.simple-chat-widget *,
+.simple-chat-widget textarea,
+.simple-chat-widget input,
+.simple-chat-widget button,
+.simple-chat-widget div {
+  text-align: left !important;
+}
+
+/* Specific left alignment for common elements */
+.simple-chat-widget .message-content,
+.simple-chat-widget .welcome-message,
+.simple-chat-widget .popular-question,
+.simple-chat-widget .bot-name,
+.simple-chat-widget .user-message,
+.simple-chat-widget .bot-message,
+.simple-chat-widget .markdown-content {
+  text-align: left !important;
+}
+
+/* Smooth opacity transitions */
+.fade-transition {
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Professional attention-grabbing animations for chat button */
+
+/* Subtle heartbeat animation - improved smoothness */
+@keyframes gentleHeartbeat {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(116, 77, 169, 0.15);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 6px 16px var(--chat-glow-color, rgba(116, 77, 169, 0.22));
+  }
+}
+
+/* Icon swing animation - smoother motion */
+@keyframes iconSwing {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-4deg);
+  }
+  60% {
+    transform: rotate(4deg);
+  }
+  80% {
+    transform: rotate(-2deg);
+  }
+}
+
+/* Gentle glow pulse - more subtle */
+@keyframes gentleGlow {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(116, 77, 169, 0.15);
+    background-color: var(--chat-primary-color, #744da9);
+  }
+  50% {
+    box-shadow: 0 4px 18px var(--chat-glow-color, rgba(116, 77, 169, 0.28)), 0 0 0 0px rgba(116, 77, 169, 0.08);
+    background-color: var(--chat-hover-color, #7d52b0);
+  }
+}
+
+/* Subtle bounce attention - smoother */
+@keyframes subtleBounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.015);
+  }
+}
+
+/* Icon wobble for attention - gentler */
+@keyframes iconWobble {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-3deg) scale(1.02);
+  }
+  50% {
+    transform: rotate(3deg) scale(1.04);
+  }
+  75% {
+    transform: rotate(-1deg) scale(1.02);
+  }
+}
+
+/* Gentle scale pulse - more subtle */
+@keyframes scalePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
+  }
+}
+
+/* Professional shimmer effect - more subtle */
+@keyframes professionalShimmer {
+  0% {
+    background: linear-gradient(45deg, #744da9, #744da9, #744da9, #744da9);
+  }
+  50% {
+    background: linear-gradient(45deg, #744da9, #7a51b2, #8058bb, #7a51b2);
+  }
+  100% {
+    background: linear-gradient(45deg, #744da9, #744da9, #744da9, #744da9);
+  }
+}
+
+/* Animation classes for dynamic application - smoother timing */
+.chat-button-heartbeat {
+  animation: gentleHeartbeat var(--animation-duration-medium, 3.5s) ease-in-out infinite;
+}
+
+.chat-button-glow {
+  animation: gentleGlow 4s ease-in-out infinite;
+}
+
+.chat-button-bounce {
+  animation: subtleBounce 3s ease-in-out infinite;
+}
+
+.chat-button-scale-pulse {
+  animation: scalePulse 4s ease-in-out infinite;
+}
+
+.chat-button-shimmer {
+  animation: professionalShimmer var(--animation-duration-slow, 5s) ease-in-out infinite;
+}
+
+.chat-icon-swing {
+  animation: iconSwing 2s ease-in-out;
+}
+
+.chat-icon-wobble {
+  animation: iconWobble var(--animation-duration-fast, 1.8s) ease-in-out;
+}
+
+/* Combination animations for variety - smoother timing */
+.chat-button-combo-1 {
+  animation: gentleHeartbeat 3.5s ease-in-out infinite, gentleGlow 5s ease-in-out infinite;
+}
+
+.chat-button-combo-2 {
+  animation: subtleBounce 3s ease-in-out infinite, professionalShimmer 6s ease-in-out infinite;
+}
+
+.chat-button-combo-3 {
+  animation: scalePulse 4s ease-in-out infinite, gentleGlow 4.5s ease-in-out infinite;
+}

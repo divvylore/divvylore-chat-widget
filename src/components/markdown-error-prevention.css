@@ -1,0 +1,104 @@
+/* Styles to help prevent chat window closing on markdown errors */
+
+/* Apply event blocking to all rendered markdown content */
+.markdown-content, 
+.event-blocking-content,
+.message-bubble-wrapper,
+.markdown-fallback {
+  pointer-events: auto; /* Ensure events are captured */
+}
+
+/* Enhanced markdown content styling */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.markdown-content h1 {
+  font-size: 24px;
+}
+
+.markdown-content h2 {
+  font-size: 20px;
+}
+
+.markdown-content h3 {
+  font-size: 18px;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding-left: 25px;
+}
+
+.markdown-content li {
+  margin-bottom: 4px;
+}
+
+.user-message-markdown h1,
+.user-message-markdown h2,
+.user-message-markdown h3,
+.user-message-markdown h4,
+.user-message-markdown h5,
+.user-message-markdown h6 {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.user-message-markdown ul,
+.user-message-markdown ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.user-message-markdown li {
+  margin-bottom: 3px;
+}
+
+/* Special style for elements that should stop event propagation */
+.event-blocking-content * {
+  pointer-events: auto;
+}
+
+/* Ensure hyperlinks remain clickable */
+.markdown-link, 
+.markdown-content a,
+.event-blocking-content a {
+  pointer-events: auto;
+  color: #0078d4;
+  text-decoration: underline;
+}
+
+/* Ensure code blocks don't trigger collapse */
+.markdown-content pre,
+.markdown-content code,
+.event-blocking-content pre,
+.event-blocking-content code {
+  pointer-events: auto;
+}
+
+/* Add safety padding around clickable elements to avoid accidental collapses */
+.markdown-content button,
+.event-blocking-content button {
+  margin: 4px;
+  pointer-events: auto;
+}
+
+/* Style for the fallback rendering when markdown parsing fails */
+.markdown-fallback {
+  border-left: 2px solid #f0f0f0;
+  padding-left: 10px;
+  white-space: pre-wrap;
+  font-family: sans-serif;
+  line-height: 1.5;
+}
