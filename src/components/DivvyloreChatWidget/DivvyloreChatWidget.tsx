@@ -247,9 +247,59 @@ const DivvyloreChatWidget: React.FC<DivvyloreChatWidgetProps> = ({
 
   // Use configuration from DivvyChatService if available, otherwise use props
   const effectiveBotName = clientInfo?.bot_name || botName;
-  const effectiveBotIcon = clientInfo?.bot_icon || botAvatarIcon;
+  
+  // Convert bot_icon string (URL or base64) to React element
+  const effectiveBotIcon = useMemo(() => {
+    const iconSrc = clientInfo?.bot_icon;
+    if (iconSrc && typeof iconSrc === 'string') {
+      // Icon is a URL or base64 string - render as img
+      return (
+        <img 
+          src={iconSrc} 
+          alt="Bot Avatar"
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            objectFit: 'cover'
+          }}
+          onError={(e) => {
+            // Hide broken image and let default avatar show
+            (e.target as HTMLImageElement).style.display = 'none';
+          }}
+        />
+      );
+    }
+    // Fall back to prop-provided icon (React element) or undefined
+    return botAvatarIcon;
+  }, [clientInfo?.bot_icon, botAvatarIcon]);
+  
   const effectiveHeaderTitle = clientInfo?.client_chat_title || clientInfo?.chat_header || headerTitle;
-  const effectiveClientIcon = clientInfo?.client_icon; // Icon for header and chat button
+  
+  // Convert client_icon string (URL or base64) to React element
+  const effectiveClientIcon = useMemo(() => {
+    const iconSrc = clientInfo?.client_icon;
+    if (iconSrc && typeof iconSrc === 'string') {
+      // Icon is a URL or base64 string - render as img
+      return (
+        <img 
+          src={iconSrc} 
+          alt="User Avatar"
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            objectFit: 'cover'
+          }}
+          onError={(e) => {
+            // Hide broken image
+            (e.target as HTMLImageElement).style.display = 'none';
+          }}
+        />
+      );
+    }
+    return null;
+  }, [clientInfo?.client_icon]);
   const effectiveStartButtonText = directClientConfig?.start_button_text || clientInfo?.start_button_text;
   
   // Handle both nested and flat start_button_config structures for backward compatibility
