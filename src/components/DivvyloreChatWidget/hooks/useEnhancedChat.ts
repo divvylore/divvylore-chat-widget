@@ -19,6 +19,7 @@ interface UseChatOptions {
   agentId?: string;
   setIsCollapsed?: (collapsed: boolean) => void;
   enableMultiSession?: boolean; // Enable multi-session management
+  disableCache?: boolean; // When true, always fetch fresh config (useful for playground/testing)
 }
 
 interface ChatTranscriptAPI {
@@ -60,6 +61,7 @@ export const useEnhancedChat = (
     options?.agentId || '',
     {
       autoInitialize: !!(options?.organizationId && options?.agentId),
+      disableCache: options?.disableCache || false,
       onError: (error) => {
         logger.error('DivvyChatService error:', error);
         const errorMessage: Message = {

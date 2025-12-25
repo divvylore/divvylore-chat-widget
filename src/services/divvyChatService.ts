@@ -220,13 +220,22 @@ class PersistentConfigCache {
 class DivvyChatServiceManager {
   private static instances = new Map<string, DivvyChatService>();
 
-  static getInstance(clientId: string, agentId: string, baseUrl?: string): DivvyChatService {
+  static getInstance(clientId: string, agentId: string, baseUrl?: string, disableCache: boolean = false): DivvyChatService {
     const instanceKey = `${clientId}_${agentId}`;
+    
+    // If cache is disabled, always create a fresh instance
+    if (disableCache) {
+      logger.service(`DivvyChatServiceManager: Creating fresh instance (cache disabled) for ${instanceKey}`);
+      const serviceBaseUrl = baseUrl || 'http://localhost:5001';
+      const instance = new DivvyChatService(clientId, agentId, serviceBaseUrl, true);
+      this.instances.set(instanceKey, instance);
+      return instance;
+    }
     
     if (!this.instances.has(instanceKey)) {
       const serviceBaseUrl = baseUrl || 'http://localhost:5001';
       logger.service(`DivvyChatServiceManager: Creating new instance for ${instanceKey}`);
-      this.instances.set(instanceKey, new DivvyChatService(clientId, agentId, serviceBaseUrl));
+      this.instances.set(instanceKey, new DivvyChatService(clientId, agentId, serviceBaseUrl, false));
     } else {
       logger.service(`DivvyChatServiceManager: Reusing existing instance for ${instanceKey}`);
     }
@@ -262,11 +271,13 @@ export class DivvyChatService {
   private initializationAttempts: number = 0;
   private maxRetries: number = 3;
   private isInitializing: boolean = false; // Add flag to prevent concurrent initialization
+  private disableCache: boolean = false; // When true, always fetch fresh config (for playground/testing)
 
-  constructor(clientId: string, agentId: string, baseUrl: string = 'http://localhost:5001') {
+  constructor(clientId: string, agentId: string, baseUrl: string = 'http://localhost:5001', disableCache: boolean = false) {
     this.clientId = clientId;
     this.agentId = agentId;
     this.baseUrl = baseUrl;
+    this.disableCache = disableCache;
     
     // Note: Domain authentication service should already be initialized by DivvyloreChatWidget
     // before this service is used. The widget initializes auth with agentKey for security.
@@ -316,8 +327,8 @@ export class DivvyChatService {
 
     this.isInitializing = true;
 
-    // Check if we have cached config even if not marked as initialized
-    if (!this.clientInfo) {
+    // Check if we have cached config even if not marked as initialized (skip if cache disabled)
+    if (!this.clientInfo && !this.disableCache) {
       this.clientInfo = PersistentConfigCache.getConfig(this.clientId);
       if (this.clientInfo) {
         logger.service(`DivvyChatService: Found cached config for client ${this.clientId}, marking as initialized`);
@@ -337,16 +348,19 @@ export class DivvyChatService {
     this.initializationAttempts++;
 
     try {
-      logger.service(`DivvyChatService: Initialization attempt ${this.initializationAttempts}/${this.maxRetries} for client ${this.clientId}`);
+      logger.service(`DivvyChatService: Initialization attempt ${this.initializationAttempts}/${this.maxRetries} for client ${this.clientId}, disableCache: ${this.disableCache}`);
       
-      // First, try to get config from cache (double-check after retry limit)
-      this.clientInfo = PersistentConfigCache.getConfig(this.clientId);
+      // First, try to get config from cache (skip if cache disabled)
+      if (!this.disableCache) {
+        this.clientInfo = PersistentConfigCache.getConfig(this.clientId);
+      }
       
       if (!this.clientInfo) {
-        // Config not cached or expired, fetch from server
-        logger.service(`DivvyChatService: Config not cached, fetching from server for client ${this.clientId}`);
+        // Config not cached or expired (or cache disabled), fetch from server
+        logger.service(`DivvyChatService: Config not cached or cache disabled, fetching from server for client ${this.clientId}`);
         
-        const configUrl = EndpointBuilder.config(this.baseUrl, this.agentId);
+        // Pass refresh=true when cache is disabled to bypass server-side cache as well
+        const configUrl = EndpointBuilder.config(this.baseUrl, this.agentId, this.disableCache);
         const authHeaders = await domainAuthService.getAuthHeaders();
         
         // Ensure we have valid authentication before proceeding

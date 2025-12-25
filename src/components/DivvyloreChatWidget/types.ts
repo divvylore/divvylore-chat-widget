@@ -47,6 +47,9 @@ export interface DivvyloreChatWidgetProps {
   
   // Multi-session management
   enableMultiSession?: boolean; // Enable multi-session chat management with localStorage
+  
+  // Cache control
+  disableCache?: boolean; // When true, always fetch fresh config (useful for playground/testing)
 }
 
 export interface ChatInputProps {

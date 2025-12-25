@@ -15,6 +15,7 @@ interface UseDivvyChatServiceOptions {
   autoInitialize?: boolean;
   onInitialized?: (success: boolean) => void;
   onError?: (error: Error) => void;
+  disableCache?: boolean; // When true, always fetch fresh config (useful for playground/testing)
 }
 
 export const useDivvyChatService = (
@@ -25,7 +26,8 @@ export const useDivvyChatService = (
   const {
     autoInitialize = true,
     onInitialized,
-    onError
+    onError,
+    disableCache = false
   } = options;
 
   // State management
@@ -83,7 +85,8 @@ export const useDivvyChatService = (
       agentId,
       baseUrl: envConfig.divvyChatServiceUrl,
       isInitializing,
-      alreadyAttempted: initializationAttemptedRef.current
+      alreadyAttempted: initializationAttemptedRef.current,
+      disableCache
     });
 
     setIsInitializing(true);
@@ -92,8 +95,9 @@ export const useDivvyChatService = (
 
     try {
       // Use singleton pattern to get service instance
-      if (!serviceRef.current) {
-        serviceRef.current = DivvyChatServiceManager.getInstance(clientId, agentId, envConfig.divvyChatServiceUrl);
+      // When disableCache is true, a fresh instance is created
+      if (!serviceRef.current || disableCache) {
+        serviceRef.current = DivvyChatServiceManager.getInstance(clientId, agentId, envConfig.divvyChatServiceUrl, disableCache);
       }
       
       // Initialize the service

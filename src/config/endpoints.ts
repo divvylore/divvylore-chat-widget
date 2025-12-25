@@ -55,9 +55,15 @@ export const EndpointBuilder = {
   /**
    * Build config endpoint with required agent_id parameter
    * Authentication is required via X-Token header from domain authentication
+   * @param baseUrl - Base URL for API
+   * @param agentId - Agent ID
+   * @param refresh - If true, bypasses cache to fetch fresh configuration (useful for playground/testing)
    */
-  config: (baseUrl: string, agentId: string): string => {
-    const params: Record<string, string> = { agent_id: agentId };
+  config: (baseUrl: string, agentId: string, refresh: boolean = false): string => {
+    const params: Record<string, string | boolean> = { agent_id: agentId };
+    if (refresh) {
+      params.refresh = true;
+    }
     return buildUrlWithQuery(baseUrl, API_ENDPOINTS.CONFIG, params);
   },
   

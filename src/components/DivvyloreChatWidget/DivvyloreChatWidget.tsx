@@ -40,14 +40,16 @@ const DivvyloreChatWidget: React.FC<DivvyloreChatWidgetProps> = ({
   organizationId,
   agentId, // Required parameter - no default value
   agentKey, // Required parameter - agent API key for authentication
-  enableMultiSession = false // Enable multi-session chat management
+  enableMultiSession = false, // Enable multi-session chat management
+  disableCache = false // When true, always fetch fresh config (useful for playground/testing)
 }) => {
   // Debug: Log component mount with authentication parameters
   console.log('[DivvyloreChatWidget] Component mounted with params:', {
     organizationId: organizationId || '(not provided)',
     agentId: agentId || '(not provided)',
     agentKey: agentKey ? '(provided)' : '(not provided)',
-    enableMultiSession
+    enableMultiSession,
+    disableCache
   });
   
   // Initialize session cleanup on mount
@@ -225,7 +227,8 @@ const DivvyloreChatWidget: React.FC<DivvyloreChatWidgetProps> = ({
     organizationId,
     agentId,
     setIsCollapsed,
-    enableMultiSession
+    enableMultiSession,
+    disableCache
   });
 
   // Update config when DivvyChatService loads configuration  
