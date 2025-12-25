@@ -41,6 +41,7 @@ interface DivvyloreChatWidgetProps {
     agentId: string;
     agentKey: string;
     enableMultiSession?: boolean;
+    disableCache?: boolean;
 }
 
 /**

@@ -40,6 +40,7 @@ export interface DivvyloreChatWidgetProps {
     agentId: string;
     agentKey: string;
     enableMultiSession?: boolean;
+    disableCache?: boolean;
 }
 export interface ChatInputProps {
     input: string;

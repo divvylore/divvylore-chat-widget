@@ -31,8 +31,11 @@ export declare const EndpointBuilder: {
     /**
      * Build config endpoint with required agent_id parameter
      * Authentication is required via X-Token header from domain authentication
+     * @param baseUrl - Base URL for API
+     * @param agentId - Agent ID
+     * @param refresh - If true, bypasses cache to fetch fresh configuration (useful for playground/testing)
      */
-    config: (baseUrl: string, agentId: string) => string;
+    config: (baseUrl: string, agentId: string, refresh?: boolean) => string;
     /**
      * Build agent chat endpoint
      */

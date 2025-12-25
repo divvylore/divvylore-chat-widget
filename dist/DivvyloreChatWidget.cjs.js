@@ -55,9 +55,15 @@ const EndpointBuilder = {
     /**
      * Build config endpoint with required agent_id parameter
      * Authentication is required via X-Token header from domain authentication
+     * @param baseUrl - Base URL for API
+     * @param agentId - Agent ID
+     * @param refresh - If true, bypasses cache to fetch fresh configuration (useful for playground/testing)
      */
-    config: (baseUrl, agentId) => {
+    config: (baseUrl, agentId, refresh = false) => {
         const params = { agent_id: agentId };
+        if (refresh) {
+            params.refresh = true;
+        }
         return buildUrlWithQuery(baseUrl, API_ENDPOINTS.CONFIG, params);
     },
     /**
@@ -903,12 +909,20 @@ PersistentConfigCache.CACHE_DURATION = 2 * 24 * 60 * 60 * 1000; // 2 days in mil
  * Service instance manager to prevent multiple instances and ensure proper caching
  */
 class DivvyChatServiceManager {
-    static getInstance(clientId, agentId, baseUrl) {
+    static getInstance(clientId, agentId, baseUrl, disableCache = false) {
         const instanceKey = `${clientId}_${agentId}`;
+        // If cache is disabled, always create a fresh instance
+        if (disableCache) {
+            logger.service(`DivvyChatServiceManager: Creating fresh instance (cache disabled) for ${instanceKey}`);
+            const serviceBaseUrl = baseUrl || 'http://localhost:5001';
+            const instance = new DivvyChatService(clientId, agentId, serviceBaseUrl, true);
+            this.instances.set(instanceKey, instance);
+            return instance;
+        }
         if (!this.instances.has(instanceKey)) {
             const serviceBaseUrl = baseUrl || 'http://localhost:5001';
             logger.service(`DivvyChatServiceManager: Creating new instance for ${instanceKey}`);
-            this.instances.set(instanceKey, new DivvyChatService(clientId, agentId, serviceBaseUrl));
+            this.instances.set(instanceKey, new DivvyChatService(clientId, agentId, serviceBaseUrl, false));
         }
         else {
             logger.service(`DivvyChatServiceManager: Reusing existing instance for ${instanceKey}`);
@@ -932,16 +946,18 @@ DivvyChatServiceManager.instances = new Map();
  * Main DivvyChatService integration class with multi-agent support
  */
 class DivvyChatService {
-    constructor(clientId, agentId, baseUrl = 'http://localhost:5001') {
+    constructor(clientId, agentId, baseUrl = 'http://localhost:5001', disableCache = false) {
         this.sessionId = null;
         this.clientInfo = null;
         this.initialized = false;
         this.initializationAttempts = 0;
         this.maxRetries = 3;
         this.isInitializing = false; // Add flag to prevent concurrent initialization
+        this.disableCache = false; // When true, always fetch fresh config (for playground/testing)
         this.clientId = clientId;
         this.agentId = agentId;
         this.baseUrl = baseUrl;
+        this.disableCache = disableCache;
         // Note: Domain authentication service should already be initialized by DivvyloreChatWidget
         // before this service is used. The widget initializes auth with agentKey for security.
         // Try to restore session from browser storage for this client-agent combination
@@ -981,8 +997,8 @@ class DivvyChatService {
             return this.initialized && !!this.clientInfo;
         }
         this.isInitializing = true;
-        // Check if we have cached config even if not marked as initialized
-        if (!this.clientInfo) {
+        // Check if we have cached config even if not marked as initialized (skip if cache disabled)
+        if (!this.clientInfo && !this.disableCache) {
             this.clientInfo = PersistentConfigCache.getConfig(this.clientId);
             if (this.clientInfo) {
                 logger.service(`DivvyChatService: Found cached config for client ${this.clientId}, marking as initialized`);
@@ -999,13 +1015,16 @@ class DivvyChatService {
         }
         this.initializationAttempts++;
         try {
-            logger.service(`DivvyChatService: Initialization attempt ${this.initializationAttempts}/${this.maxRetries} for client ${this.clientId}`);
-            // First, try to get config from cache (double-check after retry limit)
-            this.clientInfo = PersistentConfigCache.getConfig(this.clientId);
+            logger.service(`DivvyChatService: Initialization attempt ${this.initializationAttempts}/${this.maxRetries} for client ${this.clientId}, disableCache: ${this.disableCache}`);
+            // First, try to get config from cache (skip if cache disabled)
+            if (!this.disableCache) {
+                this.clientInfo = PersistentConfigCache.getConfig(this.clientId);
+            }
             if (!this.clientInfo) {
-                // Config not cached or expired, fetch from server
-                logger.service(`DivvyChatService: Config not cached, fetching from server for client ${this.clientId}`);
-                const configUrl = EndpointBuilder.config(this.baseUrl, this.agentId);
+                // Config not cached or expired (or cache disabled), fetch from server
+                logger.service(`DivvyChatService: Config not cached or cache disabled, fetching from server for client ${this.clientId}`);
+                // Pass refresh=true when cache is disabled to bypass server-side cache as well
+                const configUrl = EndpointBuilder.config(this.baseUrl, this.agentId, this.disableCache);
                 const authHeaders = await domainAuthService.getAuthHeaders();
                 // Ensure we have valid authentication before proceeding
                 if (!authHeaders['X-Token']) {
@@ -1499,7 +1518,7 @@ class DivvyChatService {
  */
 const useDivvyChatService = (clientId, agentId, // Required parameter - no default value
 options = {}) => {
-    const { autoInitialize = true, onInitialized, onError } = options;
+    const { autoInitialize = true, onInitialized, onError, disableCache = false } = options;
     // State management
     const [isInitialized, setIsInitialized] = React.useState(false);
     const [isInitializing, setIsInitializing] = React.useState(false);
@@ -1545,15 +1564,17 @@ options = {}) => {
             agentId,
             baseUrl: envConfig.divvyChatServiceUrl,
             isInitializing,
-            alreadyAttempted: initializationAttemptedRef.current
+            alreadyAttempted: initializationAttemptedRef.current,
+            disableCache
         });
         setIsInitializing(true);
         setError(null);
         initializationAttemptedRef.current = true;
         try {
             // Use singleton pattern to get service instance
-            if (!serviceRef.current) {
-                serviceRef.current = DivvyChatServiceManager.getInstance(clientId, agentId, envConfig.divvyChatServiceUrl);
+            // When disableCache is true, a fresh instance is created
+            if (!serviceRef.current || disableCache) {
+                serviceRef.current = DivvyChatServiceManager.getInstance(clientId, agentId, envConfig.divvyChatServiceUrl, disableCache);
             }
             // Initialize the service
             const success = await serviceRef.current.initialize();
@@ -2152,6 +2173,7 @@ const useEnhancedChat = (sendMessageToAPI, options) => {
     // Initialize DivvyChatService if organizationId and agentId are provided
     const divvyChatService = useDivvyChatService(options?.organizationId || '', options?.agentId || '', {
         autoInitialize: !!(options?.organizationId && options?.agentId),
+        disableCache: options?.disableCache || false,
         onError: (error) => {
             logger.error('DivvyChatService error:', error);
             const errorMessage = {
@@ -60593,14 +60615,16 @@ const ChatHistory = ({ clientId, agentId, theme, onSessionSelect, onNewChat, onC
  */
 const DivvyloreChatWidget = ({ welcomeMessage = "Hello! How can I help you today?", sendMessage, startCollapsed = true, headerTitle = "Chat", chatIcon, showHeaderIcon = true, botName = "AI Assistant", botAvatarIcon, showBotAvatar = true, defaultHeight = "580px", defaultWidth = "380px", expandedWidth = "650px", theme: customTheme = {}, onEndChat, onNewChat, popularQuestions = [], showWelcomeScreen = true, organizationId, agentId, // Required parameter - no default value
 agentKey, // Required parameter - agent API key for authentication
-enableMultiSession = false // Enable multi-session chat management
+enableMultiSession = false, // Enable multi-session chat management
+disableCache = false // When true, always fetch fresh config (useful for playground/testing)
  }) => {
     // Debug: Log component mount with authentication parameters
     console.log('[DivvyloreChatWidget] Component mounted with params:', {
         organizationId: organizationId || '(not provided)',
         agentId: agentId || '(not provided)',
         agentKey: agentKey ? '(provided)' : '(not provided)',
-        enableMultiSession
+        enableMultiSession,
+        disableCache
     });
     // Initialize session cleanup on mount
     React.useEffect(() => {
@@ -60719,7 +60743,8 @@ enableMultiSession = false // Enable multi-session chat management
         organizationId,
         agentId,
         setIsCollapsed,
-        enableMultiSession
+        enableMultiSession,
+        disableCache
     });
     // Update config when DivvyChatService loads configuration  
     React.useEffect(() => {

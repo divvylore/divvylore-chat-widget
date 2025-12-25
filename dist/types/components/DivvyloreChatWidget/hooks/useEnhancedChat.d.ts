@@ -12,6 +12,7 @@ interface UseChatOptions {
     agentId?: string;
     setIsCollapsed?: (collapsed: boolean) => void;
     enableMultiSession?: boolean;
+    disableCache?: boolean;
 }
 /**
  * Enhanced custom hook to manage multi-session chat state and operations

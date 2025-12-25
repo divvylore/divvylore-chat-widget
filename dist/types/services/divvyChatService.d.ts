@@ -61,7 +61,7 @@ export interface DivvyChatToolResult {
  */
 declare class DivvyChatServiceManager {
     private static instances;
-    static getInstance(clientId: string, agentId: string, baseUrl?: string): DivvyChatService;
+    static getInstance(clientId: string, agentId: string, baseUrl?: string, disableCache?: boolean): DivvyChatService;
     static clearInstance(clientId: string, agentId?: string): void;
     static clearAllInstances(): void;
     static hasInstance(clientId: string, agentId?: string): boolean;
@@ -79,7 +79,8 @@ export declare class DivvyChatService {
     private initializationAttempts;
     private maxRetries;
     private isInitializing;
-    constructor(clientId: string, agentId: string, baseUrl?: string);
+    private disableCache;
+    constructor(clientId: string, agentId: string, baseUrl?: string, disableCache?: boolean);
     /**
      * Initialize the service by getting client information
      */

@@ -9,6 +9,7 @@ interface UseDivvyChatServiceOptions {
     autoInitialize?: boolean;
     onInitialized?: (success: boolean) => void;
     onError?: (error: Error) => void;
+    disableCache?: boolean;
 }
 export declare const useDivvyChatService: (clientId: string, agentId: string, // Required parameter - no default value
 options?: UseDivvyChatServiceOptions) => {
