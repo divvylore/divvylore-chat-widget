@@ -3260,13 +3260,20 @@ const Header = ({ headerTitle, showHeaderIcon, setIsCollapsed, isExpanded, toggl
             alignItems: 'center',
             background: theme.background
         }, children: [jsxRuntime.jsxs("div", { style: { display: 'flex', alignItems: 'center', gap: '8px' }, children: [showHeaderIcon && (clientIcon ? (
-                    // Use client icon if available
-                    jsxRuntime.jsx("span", { style: {
+                    // Use client icon if available - handle both string (URL) and React element
+                    typeof clientIcon === 'string' ? (jsxRuntime.jsx("img", { src: clientIcon, alt: "Logo", style: {
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '4px',
+                            objectFit: 'cover'
+                        }, onError: (e) => {
+                            e.target.style.display = 'none';
+                        } })) : (jsxRuntime.jsx("span", { style: {
                             fontSize: '20px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center'
-                        }, children: clientIcon })) : (jsxRuntime.jsx(ChatIcon, {}))), jsxRuntime.jsx("span", { style: { fontWeight: 600, fontSize: '16px', color: theme.textPrimary }, children: headerTitle })] }), jsxRuntime.jsxs("div", { style: { display: 'flex', gap: '4px' }, children: [jsxRuntime.jsx(ActionButton, { onClick: handleNewChat, title: "New chat", children: jsxRuntime.jsx(NewChatIcon, {}) }), multiSessionEnabled && (jsxRuntime.jsx(ActionButton, { onClick: toggleChatHistory, title: "Chat history", children: jsxRuntime.jsx(HistoryIcon, {}) })), jsxRuntime.jsx(ActionButton, { onClick: handleEndChat, title: "End chat", children: jsxRuntime.jsx(EndChatIcon, {}) }), jsxRuntime.jsx(ActionButton, { onClick: toggleExpanded, title: isExpanded ? "Shrink chat" : "Expand chat", className: "resize-chat-button", children: isExpanded ? jsxRuntime.jsx(ShrinkIcon, {}) : jsxRuntime.jsx(ExpandIcon, {}) }), jsxRuntime.jsx(ActionButton, { onClick: () => setIsCollapsed(true), title: "Minimize chat", className: "minimize-chat-button", children: jsxRuntime.jsx(MinimizeIcon, {}) })] })] }));
+                        }, children: clientIcon }))) : (jsxRuntime.jsx(ChatIcon, {}))), jsxRuntime.jsx("span", { style: { fontWeight: 600, fontSize: '16px', color: theme.textPrimary }, children: headerTitle })] }), jsxRuntime.jsxs("div", { style: { display: 'flex', gap: '4px' }, children: [jsxRuntime.jsx(ActionButton, { onClick: handleNewChat, title: "New chat", children: jsxRuntime.jsx(NewChatIcon, {}) }), multiSessionEnabled && (jsxRuntime.jsx(ActionButton, { onClick: toggleChatHistory, title: "Chat history", children: jsxRuntime.jsx(HistoryIcon, {}) })), jsxRuntime.jsx(ActionButton, { onClick: handleEndChat, title: "End chat", children: jsxRuntime.jsx(EndChatIcon, {}) }), jsxRuntime.jsx(ActionButton, { onClick: toggleExpanded, title: isExpanded ? "Shrink chat" : "Expand chat", className: "resize-chat-button", children: isExpanded ? jsxRuntime.jsx(ShrinkIcon, {}) : jsxRuntime.jsx(ExpandIcon, {}) }), jsxRuntime.jsx(ActionButton, { onClick: () => setIsCollapsed(true), title: "Minimize chat", className: "minimize-chat-button", children: jsxRuntime.jsx(MinimizeIcon, {}) })] })] }));
 };
 const ActionButton = ({ onClick, title, children, className }) => {
     return (jsxRuntime.jsx("button", { onClick: (e) => {
@@ -60732,9 +60739,49 @@ enableMultiSession = false // Enable multi-session chat management
     }, [isServiceInitialized, clientInfo]);
     // Use configuration from DivvyChatService if available, otherwise use props
     const effectiveBotName = clientInfo?.bot_name || botName;
-    const effectiveBotIcon = clientInfo?.bot_icon || botAvatarIcon;
+    // Convert bot_icon string (URL or base64) to React element
+    const effectiveBotIcon = React.useMemo(() => {
+        const iconSrc = clientInfo?.bot_icon;
+        if (iconSrc && typeof iconSrc === 'string') {
+            // Icon is a URL or base64 string - render as img
+            return (jsxRuntime.jsx("img", { src: iconSrc, alt: "Bot Avatar", style: {
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    objectFit: 'cover'
+                }, onError: (e) => {
+                    // Hide broken image and let default avatar show
+                    e.target.style.display = 'none';
+                } }));
+        }
+        // Fall back to prop-provided icon (React element) or undefined
+        return botAvatarIcon;
+    }, [clientInfo?.bot_icon, botAvatarIcon]);
     const effectiveHeaderTitle = clientInfo?.client_chat_title || clientInfo?.chat_header || headerTitle;
-    const effectiveClientIcon = clientInfo?.client_icon; // Icon for header and chat button
+    // Client icon - keep as string (URL/base64) for components that render it themselves
+    // Components will handle the conversion to img element as needed
+    const effectiveClientIcon = React.useMemo(() => {
+        const iconSrc = clientInfo?.client_icon;
+        if (iconSrc && typeof iconSrc === 'string') {
+            return iconSrc;
+        }
+        return undefined;
+    }, [clientInfo?.client_icon]);
+    // Client icon as React element for direct rendering (e.g., in start button)
+    const effectiveClientIconElement = React.useMemo(() => {
+        const iconSrc = clientInfo?.client_icon;
+        if (iconSrc && typeof iconSrc === 'string') {
+            return (jsxRuntime.jsx("img", { src: iconSrc, alt: "Client Icon", style: {
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    objectFit: 'cover'
+                }, onError: (e) => {
+                    e.target.style.display = 'none';
+                } }));
+        }
+        return null;
+    }, [clientInfo?.client_icon]);
     const effectiveStartButtonText = directClientConfig?.start_button_text || clientInfo?.start_button_text;
     // Handle both nested and flat start_button_config structures for backward compatibility
     const effectiveStartButtonConfig = React.useMemo(() => {
@@ -60962,12 +61009,12 @@ enableMultiSession = false // Enable multi-session chat management
                             justifyContent: 'center',
                             flexShrink: 0,
                             order: (effectiveStartButtonConfig?.text_position === 'left') ? 2 : 1
-                        }, children: effectiveClientIcon ? (
+                        }, children: effectiveClientIconElement ? (
                         // Use client icon if available
                         jsxRuntime.jsx("span", { style: {
                                 fontSize: effectiveStartButtonText ? '20px' : '28px',
                                 transition: 'transform 0.3s ease-in-out'
-                            }, children: effectiveClientIcon })) : chatIcon ? chatIcon : (
+                            }, children: effectiveClientIconElement })) : chatIcon ? chatIcon : (
                         // Default avatar when no client icon is provided
                         jsxRuntime.jsx("div", { style: {
                                 width: effectiveStartButtonText ? '32px' : '40px',

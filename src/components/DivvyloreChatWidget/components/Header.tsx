@@ -12,7 +12,7 @@ interface HeaderProps {
   showChatHistory: boolean;
   toggleChatHistory: () => void;
   theme: any;
-  clientIcon?: string; // Client-specific icon for customization
+  clientIcon?: string | React.ReactNode; // Client-specific icon for customization (URL string or React element)
   multiSessionEnabled?: boolean; // Whether to show multi-session features
 }
 
@@ -43,15 +43,31 @@ export const Header: React.FC<HeaderProps> = ({
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         {showHeaderIcon && (
           clientIcon ? (
-            // Use client icon if available
-            <span style={{
-              fontSize: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              {clientIcon}
-            </span>
+            // Use client icon if available - handle both string (URL) and React element
+            typeof clientIcon === 'string' ? (
+              <img 
+                src={clientIcon} 
+                alt="Logo"
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '4px',
+                  objectFit: 'cover'
+                }}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            ) : (
+              <span style={{
+                fontSize: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {clientIcon}
+              </span>
+            )
           ) : (
             <ChatIcon />
           )

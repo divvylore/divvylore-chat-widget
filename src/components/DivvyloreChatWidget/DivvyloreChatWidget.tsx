@@ -276,15 +276,24 @@ const DivvyloreChatWidget: React.FC<DivvyloreChatWidgetProps> = ({
   
   const effectiveHeaderTitle = clientInfo?.client_chat_title || clientInfo?.chat_header || headerTitle;
   
-  // Convert client_icon string (URL or base64) to React element
+  // Client icon - keep as string (URL/base64) for components that render it themselves
+  // Components will handle the conversion to img element as needed
   const effectiveClientIcon = useMemo(() => {
     const iconSrc = clientInfo?.client_icon;
     if (iconSrc && typeof iconSrc === 'string') {
-      // Icon is a URL or base64 string - render as img
+      return iconSrc;
+    }
+    return undefined;
+  }, [clientInfo?.client_icon]);
+  
+  // Client icon as React element for direct rendering (e.g., in start button)
+  const effectiveClientIconElement = useMemo(() => {
+    const iconSrc = clientInfo?.client_icon;
+    if (iconSrc && typeof iconSrc === 'string') {
       return (
         <img 
           src={iconSrc} 
-          alt="User Avatar"
+          alt="Client Icon"
           style={{
             width: '32px',
             height: '32px',
@@ -292,7 +301,6 @@ const DivvyloreChatWidget: React.FC<DivvyloreChatWidgetProps> = ({
             objectFit: 'cover'
           }}
           onError={(e) => {
-            // Hide broken image
             (e.target as HTMLImageElement).style.display = 'none';
           }}
         />
@@ -566,13 +574,13 @@ const DivvyloreChatWidget: React.FC<DivvyloreChatWidgetProps> = ({
               order: (effectiveStartButtonConfig?.text_position === 'left') ? 2 : 1
             }}
           >
-            {effectiveClientIcon ? (
+            {effectiveClientIconElement ? (
               // Use client icon if available
               <span style={{
                 fontSize: effectiveStartButtonText ? '20px' : '28px',
                 transition: 'transform 0.3s ease-in-out'
               }}>
-                {effectiveClientIcon}
+                {effectiveClientIconElement}
               </span>
             ) : chatIcon ? chatIcon : (
               // Default avatar when no client icon is provided

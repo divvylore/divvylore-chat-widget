@@ -93,7 +93,7 @@ interface HeaderProps {
     showChatHistory: boolean;
     toggleChatHistory: () => void;
     theme: any;
-    clientIcon?: string;
+    clientIcon?: string | react.ReactNode;
     multiSessionEnabled?: boolean;
 }
 declare const Header: react.FC<HeaderProps>;
