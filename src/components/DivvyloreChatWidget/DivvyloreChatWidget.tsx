@@ -655,7 +655,8 @@ const DivvyloreChatWidget: React.FC<DivvyloreChatWidgetProps> = ({
           bottom: '28px',
           right: '28px',
           width: isExpanded ? expandedWidth : defaultWidth,
-          height: defaultHeight,
+          height: `min(${defaultHeight}, calc(100vh - 56px))`,
+          maxHeight: 'calc(100vh - 56px)',
           borderRadius: '8px',
           backgroundColor: theme.background,
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
@@ -718,6 +719,53 @@ const DivvyloreChatWidget: React.FC<DivvyloreChatWidgetProps> = ({
           clientIcon={effectiveClientIcon}
           multiSessionEnabled={!!multiSessionEnabled}
         />
+        
+        {/* Privacy Notice Banner */}
+        <div
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#f8f9fa',
+            borderBottom: '1px solid #e1e4ea',
+            fontSize: '11px',
+            color: '#666666',
+            textAlign: 'center',
+            lineHeight: '1.4',
+            flexShrink: 0
+          }}
+        >
+          This chat is recorded using a cloud service and is subject to the terms of our{' '}
+          <a
+            href="https://divvylore.com/agent/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: '#1a73e8',
+              textDecoration: 'none'
+            }}
+          >
+            Privacy Notice
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{
+                marginLeft: '2px',
+                verticalAlign: 'middle',
+                display: 'inline-block'
+              }}
+            >
+              <path
+                d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"
+                stroke="#1a73e8"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
         
         {/* Messages container or Welcome Screen */}
         {messages.length === 0 && showWelcomeScreen ? (
