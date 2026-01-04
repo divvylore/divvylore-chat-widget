@@ -97,6 +97,182 @@
   white-space: pre-wrap;
 }
 
+/* ======================================
+   Rich Content Cards - Images, Videos, Links
+   ====================================== */
+
+/* Media Card Base Styles */
+.media-card {
+  margin: 12px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e1e4ea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  max-width: 100%;
+}
+
+.media-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+/* Image Card */
+.image-card {
+  display: inline-block;
+}
+
+.media-card-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  max-height: 300px;
+  object-fit: contain;
+  background: #f8f9fa;
+}
+
+.media-card-caption {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #666;
+  background: #f8f9fa;
+  border-top: 1px solid #e1e4ea;
+}
+
+/* Loading state for images */
+.media-card-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+  background: #f8f9fa;
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #e1e4ea;
+  border-top-color: #744da9;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Video Card */
+.video-card {
+  position: relative;
+}
+
+.video-thumbnail-link {
+  display: block;
+  position: relative;
+}
+
+.video-thumbnail {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+}
+
+.video-play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  transition: background 0.2s ease;
+}
+
+.video-thumbnail-link:hover .video-play-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.media-card-video {
+  width: 100%;
+  max-height: 300px;
+  background: #000;
+}
+
+/* Video Link Card */
+.video-link-card {
+  background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%) !important;
+  color: white !important;
+}
+
+.video-link-card .link-card-icon {
+  font-size: 16px;
+}
+
+/* Enhanced Link Styles */
+.markdown-link-enhanced {
+  display: inline-flex;
+  align-items: center;
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  gap: 2px;
+}
+
+.markdown-link-enhanced:hover {
+  color: #1557b0;
+  text-decoration: underline;
+}
+
+.markdown-link-enhanced .link-text {
+  word-break: break-word;
+}
+
+/* Link Card - for standalone links */
+.markdown-link-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  background: #f8f9fa;
+  border: 1px solid #e1e4ea;
+  border-radius: 8px;
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.markdown-link-card:hover {
+  background: #f0f4f8;
+  border-color: #1a73e8;
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.15);
+}
+
+.link-card-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #e8f0fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.link-card-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .markdown-content {
@@ -106,4 +282,292 @@
   .markdown-list {
     padding-left: 24px;
   }
+  
+  .media-card {
+    border-radius: 8px;
+  }
+  
+  .media-card-image {
+    max-height: 200px;
+  }
+  
+  .video-thumbnail {
+    max-height: 150px;
+  }
+  
+  .markdown-link-card {
+    padding: 10px 12px;
+  }
 }
+
+/* ======================================
+   Media Gallery - Professional Design
+   ====================================== */
+
+.media-gallery-container {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+/* Hide empty containers */
+.media-gallery-container:empty {
+  display: none;
+}
+
+/* Image Grid */
+.media-gallery-grid {
+  display: grid;
+  gap: 3px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Hide grid if all children are hidden */
+.media-gallery-grid:empty {
+  display: none;
+}
+
+.media-grid-1 {
+  grid-template-columns: 1fr;
+}
+
+.media-grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.media-grid-3 {
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.media-grid-3 .media-gallery-item:first-child {
+  grid-row: span 2;
+}
+
+.media-grid-4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+/* Individual image item */
+.media-gallery-item {
+  position: relative;
+  overflow: hidden;
+  background: #e9ecef;
+  aspect-ratio: 16/9;
+}
+
+.media-grid-1 .media-gallery-item {
+  aspect-ratio: 16/9;
+  max-height: 280px;
+}
+
+.media-grid-2 .media-gallery-item {
+  aspect-ratio: 1;
+}
+
+.media-grid-3 .media-gallery-item:first-child {
+  aspect-ratio: auto;
+}
+
+.media-grid-3 .media-gallery-item:not(:first-child) {
+  aspect-ratio: 1;
+}
+
+.media-grid-4 .media-gallery-item {
+  aspect-ratio: 1;
+}
+
+.media-gallery-item a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.media-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.media-gallery-item:hover .media-gallery-img {
+  transform: scale(1.03);
+}
+
+/* Loading state */
+.media-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f2f5;
+}
+
+/* Error state */
+.media-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  color: #8e8e93;
+  font-size: 12px;
+}
+
+/* +X more overlay */
+.media-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+/* Video Cards Container */
+.media-gallery-videos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Hide if empty */
+.media-gallery-videos:empty {
+  display: none;
+}
+
+/* Only add margin-top if there are images before */
+.media-gallery-grid + .media-gallery-videos {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Professional Video Card */
+.video-card {
+  display: flex;
+  align-items: stretch;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.video-card:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.video-card-thumbnail {
+  position: relative;
+  width: 140px;
+  min-width: 140px;
+  height: 80px;
+  background: #1a1a2e;
+  flex-shrink: 0;
+}
+
+.video-card-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-card-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  transition: background 0.2s ease;
+}
+
+.video-card:hover .video-card-play {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.video-card-play svg {
+  width: 36px;
+  height: 36px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+}
+
+.video-card-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.video-card-placeholder svg {
+  width: 32px;
+  height: 32px;
+  opacity: 0.9;
+}
+
+.video-card-info {
+  flex: 1;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.video-card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1c1e21;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.video-card-domain {
+  font-size: 12px;
+  color: #8e8e93;
+  text-transform: lowercase;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .media-gallery-grid {
+    border-radius: 8px;
+  }
+  
+  .media-grid-1 .media-gallery-item {
+    max-height: 200px;
+  }
+  
+  .video-card-thumbnail {
+    width: 100px;
+    min-width: 100px;
+    height: 70px;
+  }
+  
+  .video-card-info {
+    padding: 10px 12px;
+  }
+  
+  .video-card-title {
+    font-size: 13px;
+  }
+}
+
