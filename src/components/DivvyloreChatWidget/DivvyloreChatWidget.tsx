@@ -683,7 +683,7 @@ const DivvyloreChatWidget: React.FC<DivvyloreChatWidgetProps> = ({
         }}
       >
         {/* Chat History View - Overlay */}
-        {showChatHistory && multiSessionEnabled && organizationId && agentId && (
+        {showChatHistory && organizationId && agentId && (
           <ChatHistoryComponent 
             clientId={organizationId}
             agentId={agentId}

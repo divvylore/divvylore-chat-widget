@@ -85,15 +85,12 @@ export const Header: React.FC<HeaderProps> = ({
           <NewChatIcon />
         </ActionButton>
         
-        {multiSessionEnabled && (
-          <ActionButton
-            onClick={toggleChatHistory}
-            title="Chat history"
-          >
-            <HistoryIcon />
-            {/* Badge could go here if there are chat history items */}
-          </ActionButton>
-        )}
+        <ActionButton
+          onClick={toggleChatHistory}
+          title="Chat history"
+        >
+          <HistoryIcon />
+        </ActionButton>
         
         <ActionButton
           onClick={handleEndChat}

@@ -46,14 +46,14 @@ interface StartJobResponse {
 const DivvyChatServiceDemo: React.FC = () => {
   // Test credentials - in production, partners would provide their own values
   const [currentClient, setCurrentClient] = useState('62df2816af8efaa1cae30882');
-  const [currentAgent, setCurrentAgent] = useState('68aaa5f5c701066ab80f7e1c');
-  const [currentAgentKey, setCurrentAgentKey] = useState('ak_J5a0SnYN3tdEzHGby-5tZ5j1eIYLxTCKTcihSvJ89YY');
+  const [currentAgent, setCurrentAgent] = useState('694ca2e03d3b3b88bd52e12e');
+  const [currentAgentKey, setCurrentAgentKey] = useState('ak_DxmPUBniRW6SeSX5WMJxt5w2jg3K4vMU');
   const [enableMultiSession, setEnableMultiSession] = useState(true);
   const [activeTab, setActiveTab] = useState<'chat' | 'upload'>('chat');
   
   // Document upload state
   const [clientId, setClientId] = useState<string>('62df2816af8efaa1cae30882');
-  const [agentId, setAgentId] = useState<string>('68aaa5f5c701066ab80f7e1c');
+  const [agentId, setAgentId] = useState<string>('694ca2e03d3b3b88bd52e12e');
   const [jwtToken, setJwtToken] = useState<string>('');
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   const [isUploading, setIsUploading] = useState(false);
